@@ -51,7 +51,7 @@ const dispatchInner = (dispatch, getState, next, resolve) => (action) => {
   return next(action);
 };
 
-const reduxStoreHistory = (storeHistory) => ({
+const reduxThunkHistory = (storeHistory) => ({
   dispatch, getState,
 }) => (next) => (action) => {
   if (typeof action === 'function') {
@@ -66,7 +66,7 @@ const reduxStoreHistory = (storeHistory) => ({
 
 export {
   actionStringify,
-  reduxStoreHistory,
+  reduxThunkHistory,
   actionHistoryStringify,
   sliceLastHistory,
 };
