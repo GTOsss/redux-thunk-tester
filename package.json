@@ -1,0 +1,32 @@
+{
+  "name": "redux-thunk-tester",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/GTOsss/redux-thunk-tester.git"
+  },
+  "keywords": [
+    "react",
+    "redux",
+    "thunk",
+    "tester",
+    "store",
+    "emulator",
+    "redux"
+  ],
+  "author": "GTOsss",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/GTOsss/redux-thunk-tester/issues"
+  },
+  "homepage": "https://github.com/GTOsss/redux-thunk-tester#readme",
+  "dependencies": {
+    "colors": "^1.3.2",
+    "stringify-object": "^3.3.0"
+  }
+}
