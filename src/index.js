@@ -64,7 +64,7 @@ const reduxThunkHistory = (storeHistory) => ({
   return next(action);
 };
 
-module.exports = actionStringify;
-module.exports = reduxThunkHistory;
-module.exports = actionHistoryStringify;
-module.exports = sliceLastHistory;
+module.exports.actionStringify = actionStringify;
+module.exports.reduxThunkHistory = reduxThunkHistory;
+module.exports.actionHistoryStringify = actionHistoryStringify;
+module.exports.sliceLastHistory = sliceLastHistory;
