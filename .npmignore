@@ -9,3 +9,4 @@ webpack.*
 coverage
 package-lock.json
 yarn.lock
+src

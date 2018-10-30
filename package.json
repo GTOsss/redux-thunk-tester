@@ -1,8 +1,8 @@
 {
   "name": "redux-thunk-tester",
-  "version": "1.0.8",
+  "version": "1.0.9",
   "description": "",
-  "main": "dist/redux-thunk-tester.min.js",
+  "main": "lib/index.js",
   "scripts": {
     "clean": "rimraf dist lib es",
     "build": "npm run clean && npm run build:es && npm run build:lib && npm run build:umd && npm run build:umd:min",
