@@ -1,5 +1,8 @@
 import Colors from 'colors/safe';
 import stringifyObject from 'stringify-object';
+import createReduxThunkHistory from './redux-middware';
+
+let actions = [];
 
 /**
  * @param {string} typeArg Actions type
@@ -25,48 +28,31 @@ const actionStringify = ({
  * @param {boolean} withColor If need color.
  * @returns {string} String.
  */
-const actionHistoryStringify = (actions, { inlineLimit = 50, withColor = true } = {}) => actions
+const getActionHistoryStringify = ({ inlineLimit = 50, withColor = false } = {}) => actions
   .map((action) => actionStringify(action, { inlineLimit, withColor })).join(',\n');
 
-const sliceLastHistory = (actionHistory, prevSliceLength) => actionHistory
-  .slice(prevSliceLength, actionHistory.length);
+/**
+ * Get actions
+ * @returns {Array} Array of actions
+ */
+const getActionHistory = () => actions;
 
-const createDispatchPromise = () => {
-  let resolve;
-  let reject;
-
-  const promise = new Promise((res, rej) => {
-    resolve = res;
-    reject = rej;
-  });
-
-  return { promise, resolve, reject };
+/**
+ * Clear actions history.
+ */
+const clearActionHistory = () => {
+  actions = [];
 };
 
-const dispatchInner = (dispatch, getState, next, resolve) => (action) => {
-  if (typeof action === 'function') {
-    return action(dispatchInner(dispatch, getState, next, resolve));
-  }
-  resolve(action);
-  return next(action);
-};
-
-const reduxThunkHistory = (storeHistory) => ({
-  dispatch, getState,
-}) => (next) => (action) => {
-  if (typeof action === 'function') {
-    const { promise, resolve } = createDispatchPromise();
-    const asyncDispatch = dispatchInner(dispatch, getState, next, resolve);
-    storeHistory.push(promise);
-    return action(asyncDispatch, getState);
-  }
-  storeHistory.push(action);
-  return next(action);
-};
+/**
+ * Function for "applyMiddleware" of redux.
+ */
+const reduxThunkHistory = createReduxThunkHistory(actions);
 
 export {
   actionStringify,
-  actionHistoryStringify,
+  getActionHistoryStringify,
+  getActionHistory,
+  clearActionHistory,
   reduxThunkHistory,
-  sliceLastHistory,
 };
