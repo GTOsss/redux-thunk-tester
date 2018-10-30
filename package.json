@@ -1,6 +1,6 @@
 {
   "name": "redux-thunk-tester",
-  "version": "1.0.7",
+  "version": "1.0.8",
   "description": "",
   "main": "dist/redux-thunk-tester.min.js",
   "scripts": {
