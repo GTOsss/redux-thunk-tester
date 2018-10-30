@@ -39,10 +39,9 @@ const getActionHistory = () => actions;
 
 /**
  * Clear actions history.
+ * @returns {Array} Cleared actions.
  */
-const clearActionHistory = () => {
-  actions = [];
-};
+const clearActionHistory = () => actions.splice(0, actions.length);
 
 /**
  * Function for "applyMiddleware" of redux.
