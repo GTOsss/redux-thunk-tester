@@ -133,7 +133,7 @@ describe('Example.', () => {
 
 ```
 
-### Result:
+### example.test.js results:
 ![Screenshot result 1](https://raw.githubusercontent.com/GTOsss/redux-thunk-tester/master/readme-source/1.png)
 ![Screenshot result 2](https://raw.githubusercontent.com/GTOsss/redux-thunk-tester/master/readme-source/2.png)
 ![Screenshot result 3](https://raw.githubusercontent.com/GTOsss/redux-thunk-tester/master/readme-source/3.png)
