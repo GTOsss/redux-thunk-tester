@@ -1,6 +1,6 @@
 {
   "name": "redux-thunk-tester",
-  "version": "2.0.5",
+  "version": "2.0.6",
   "description": "Useful for integration tests when using synchronous/asynchronous redux actions.",
   "main": "lib/index.js",
   "scripts": {
