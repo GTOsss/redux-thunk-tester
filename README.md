@@ -1,5 +1,6 @@
 # Redux thunk tester
-## Example.
+Useful for integration tests when using synchronous / asynchronous redux actions.
+## Example
 ### example.js:
 ```
 const FOCUS = 'FOCUS';
