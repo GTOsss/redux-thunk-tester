@@ -1,6 +1,6 @@
 {
   "name": "redux-thunk-tester",
-  "version": "2.0.4",
+  "version": "2.0.5",
   "description": "Useful for integration tests when using synchronous/asynchronous redux actions.",
   "main": "lib/index.js",
   "scripts": {
@@ -21,6 +21,9 @@
     "thunk",
     "tester",
     "store",
+    "test",
+    "enzyme",
+    "jest",
     "emulator"
   ],
   "author": "GTOsss",
