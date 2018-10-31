@@ -1,5 +1,5 @@
 # Redux thunk tester
-Useful for integration tests when using synchronous / asynchronous redux actions.
+Useful for integration tests when using synchronous/asynchronous redux actions.
 ## Example
 ### example.js:
 ```

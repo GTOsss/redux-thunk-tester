@@ -1,7 +1,7 @@
 {
   "name": "redux-thunk-tester",
   "version": "2.0.4",
-  "description": "",
+  "description": "Useful for integration tests when using synchronous/asynchronous redux actions.",
   "main": "lib/index.js",
   "scripts": {
     "clean": "rimraf dist lib es",
