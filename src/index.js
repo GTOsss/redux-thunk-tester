@@ -29,13 +29,32 @@ const actionStringify = ({
  * @returns {string} String.
  */
 const getActionHistoryStringify = ({ inlineLimit = 50, withColor = false } = {}) => actions
-  .map((action) => actionStringify(action, { inlineLimit, withColor })).join(',\n');
+  .map((action) => actionStringify(action, { inlineLimit, withColor }))
+  .join(',\n');
+
+/**
+ * @param {array} actions Actions history.
+ * @param {number} inlineLimit How many chat can use for line.
+ * @param {boolean} withColor If need color.
+ * @returns {string} String.
+ */
+const getActionHistoryStringifyAsync = async (
+  { inlineLimit = 50, withColor = false } = {}
+) => (await Promise.all(actions))
+  .map((action) => actionStringify(action, { inlineLimit, withColor }))
+  .join(',\n');
+
+/**
+ * Get actions
+ * @returns {Array} Array of actions or promises
+ */
+const getActionHistory = () => actions;
 
 /**
  * Get actions
  * @returns {Array} Array of actions
  */
-const getActionHistory = () => actions;
+const getActionHistoryAsync = async () => (await Promise.all(actions));
 
 /**
  * Clear actions history.
@@ -51,7 +70,9 @@ const reduxThunkHistory = createReduxThunkHistory(actions);
 export {
   actionStringify,
   getActionHistoryStringify,
+  getActionHistoryStringifyAsync,
   getActionHistory,
+  getActionHistoryAsync,
   clearActionHistory,
   reduxThunkHistory,
 };
