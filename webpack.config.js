@@ -1,4 +1,5 @@
 const webpack = require('webpack');
+const TypedocWebpackPlugin = require('typedoc-webpack-plugin');
 
 const env = process.env.NODE_ENV;
 
@@ -38,6 +39,11 @@ module.exports = {
   plugins: [
     new webpack.DefinePlugin({
       'process.env.NODE_ENV': JSON.stringify(env)
+    }),
+    new TypedocWebpackPlugin({
+      out: './docs',
+      module: 'commonjs',
+      target: 'es6',
     }),
   ]
 };

@@ -24,7 +24,7 @@ const actionStringify = ({
 
 /**
  * @param {array} actions Actions history.
- * @param {number} inlineLimit How many chat can use for line.
+ * @param {number} inlineLimit How many char can use for line.
  * @param {boolean} withColor If need color.
  * @returns {string} String.
  */
@@ -34,7 +34,7 @@ const getActionHistoryStringify = ({ inlineLimit = 50, withColor = false } = {})
 
 /**
  * @param {array} actions Actions history.
- * @param {number} inlineLimit How many chat can use for line.
+ * @param {number} inlineLimit How many char can use for line.
  * @param {boolean} withColor If need color.
  * @returns {string} String.
  */
