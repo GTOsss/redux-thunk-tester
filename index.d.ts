@@ -9,8 +9,8 @@ type StringifyOptions = {
 	withColor?: boolean,
 }
 
-export function actionStringify(action: Action, options: StringifyOptions): string;
-export function getActionHistoryStringify(options: StringifyOptions): string;
+export function actionStringify(action: Action, options?: StringifyOptions): string;
+export function getActionHistoryStringify(options?: StringifyOptions): string;
 export function getActionHistoryStringifyAsync(): Promise<string>;
 export function getActionHistory(): Action[] | Promise<Action>[];
 export function getActionHistoryAsync(): Promise<Action>[];
