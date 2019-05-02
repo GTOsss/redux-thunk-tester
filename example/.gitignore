@@ -1,11 +1,13 @@
-#inner
-/example/.idea
-/example/node_modules
+node_modules
+package-lock.json
 
-# Builds
-/es
-/lib
+# Compiled output
 /dist
+/tmp
+/out-tsc
+.scannerwork/
+/public-prod-build
+# /app/public
 
 # Dependencies
 /node_modules

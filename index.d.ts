@@ -9,10 +9,16 @@ type StringifyOptions = {
 	withColor?: boolean,
 }
 
-export function actionStringify(action: Action, options?: StringifyOptions): string;
-export function getActionHistoryStringify(options?: StringifyOptions): string;
-export function getActionHistoryStringifyAsync(): Promise<string>;
-export function getActionHistory(): Action[] | Promise<Action>[];
-export function getActionHistoryAsync(): Promise<Action>[];
-export function clearActionHistory(): Action[] | Promise<Action>[];
-export function reduxThunkHistory() : any;
+declare class ReduxThunkTester {
+	readonly actions: Array<object>;
+
+	static actionStringify(action: Action, options?: StringifyOptions): string;
+	getActionHistoryStringify(options?: StringifyOptions): string;
+	// getActionHistoryStringifyAsync(): Promise<string>;
+	getActionHistory(): Action[] | Promise<Action>[];
+	// getActionHistoryAsync(): Promise<Action>[];
+	clearActionHistory(): Action[] | Promise<Action>[];
+	createReduxThunkHistoryMiddleware() : any;
+}
+
+export default ReduxThunkTester;

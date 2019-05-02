@@ -1,0 +1,36 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`redux-thunk-tester actionStringify 1`] = `
+"TEST_ACTION
+ payload: {value: 'test'}"
+`;
+
+exports[`redux-thunk-tester actionStringify 2`] = `
+"TEST_ACTION
+ payload: {
+	value: 'test'
+}"
+`;
+
+exports[`redux-thunk-tester clearActionHistory 1`] = `
+"TEST_ACTION_SECOND
+ payload: {value: 'test'}"
+`;
+
+exports[`redux-thunk-tester getActionHistoryStringify 1`] = `
+"TEST_ACTION_FIRST
+ payload: {value: 'test'},
+TEST_ACTION_SECOND
+ payload: {value: 'test'}"
+`;
+
+exports[`redux-thunk-tester getActionHistoryStringify 2`] = `
+"TEST_ACTION_FIRST
+ payload: {
+	value: 'test'
+},
+TEST_ACTION_SECOND
+ payload: {
+	value: 'test'
+}"
+`;

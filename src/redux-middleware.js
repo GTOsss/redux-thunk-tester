@@ -18,7 +18,7 @@ const dispatchInner = (dispatch, getState, next, resolve) => (action) => {
   return next(action);
 };
 
-const createReduxThunkHistory = (storeHistory) => ({
+const createReduxThunkHistoryMiddleware = (storeHistory) => ({
   dispatch, getState,
 }) => (next) => (action) => {
   if (typeof action === 'function') {
@@ -31,4 +31,4 @@ const createReduxThunkHistory = (storeHistory) => ({
   return next(action);
 };
 
-export default createReduxThunkHistory;
+export default createReduxThunkHistoryMiddleware;
