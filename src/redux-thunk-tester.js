@@ -1,6 +1,6 @@
 import Colors from 'colors/safe';
 import stringifyObject from 'stringify-object';
-import createReduxThunkHistoryMiddleware from './redux-middleware';
+import creatHistoryMiddleware from './redux-middleware';
 
 class ReduxThunkTester {
   constructor() {
@@ -35,17 +35,17 @@ class ReduxThunkTester {
     .map((action) => ReduxThunkTester.actionStringify(action, { inlineLimit, withColor }))
     .join(',\n');
 
-  // /**
-  //  * @param {array} actions Actions history.
-  //  * @param {number} inlineLimit How many char can use for line.
-  //  * @param {boolean} withColor If need color.
-  //  * @returns {string} String.
-  //  */
-  // getActionHistoryStringifyAsync = async (
-  //   { inlineLimit = 50, withColor = false } = {}
-  // ) => (await Promise.all(this.actions))
-  //   .map((action) => ReduxThunkTester.actionStringify(action, { inlineLimit, withColor }))
-  //   .join(',\n');
+  /**
+   * @param {array} actions Actions history.
+   * @param {number} inlineLimit How many char can use for line.
+   * @param {boolean} withColor If need color.
+   * @returns {string} String.
+   */
+  getActionHistoryStringifyAsync = async (
+    { inlineLimit = 50, withColor = false } = {}
+  ) => (await Promise.all(this.actions))
+    .map((action) => ReduxThunkTester.actionStringify(action, { inlineLimit, withColor }))
+    .join(',\n');
 
   /**
    * Get actions
@@ -53,11 +53,11 @@ class ReduxThunkTester {
    */
   getActionHistory = () => this.actions;
 
-  // /**
-  //  * Get actions
-  //  * @returns {Array} Array of actions
-  //  */
-  // getActionHistoryAsync = async () => (await Promise.all(this.actions));
+  /**
+   * Get actions
+   * @returns {Array} Array of actions
+   */
+  getActionHistoryAsync = async () => (await Promise.all(this.actions));
 
   /**
    * Clear actions history.
@@ -68,7 +68,7 @@ class ReduxThunkTester {
   /**
    * Function for "applyMiddleware" of redux.
    */
-  createReduxThunkHistoryMiddleware = () => createReduxThunkHistoryMiddleware(this.actions) ;
+  createReduxThunkHistoryMiddleware = () => creatHistoryMiddleware(this.actions) ;
 }
 
 export default ReduxThunkTester;

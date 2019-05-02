@@ -34,3 +34,15 @@ TEST_ACTION_SECOND
 	value: 'test'
 }"
 `;
+
+exports[`redux-thunk-tester getActionHistoryStringifyAsync 1`] = `
+"INCREMENT,
+INCREMENT,
+INCREMENT"
+`;
+
+exports[`redux-thunk-tester getActionHistoryStringifyAsync 2`] = `
+"INCREMENT,
+INCREMENT,
+INCREMENT"
+`;

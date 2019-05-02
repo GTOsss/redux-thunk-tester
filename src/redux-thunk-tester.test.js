@@ -19,8 +19,8 @@ const getNewStore = () => {
   const store = createStore(
     counter,
     applyMiddleware(
-      thunk,
       reduxThunkTester.createReduxThunkHistoryMiddleware(),
+      thunk,
     ),
   );
 
@@ -115,7 +115,9 @@ describe('redux-middleware', () => {
     expect(await Promise.all(history)).toEqual([action, action]);
     expect(middlewareNext(actionThunk())).toBeInstanceOf(Promise);
 
-    middlewareNext(actionThunkWithDispatchThunk());
+    history.splice(0, history.length);
+    middlewareNext(incrementActionAsyncWithDelay());
+    expect(history[0]).toBeInstanceOf(Promise);
   });
 });
 
@@ -123,27 +125,47 @@ describe('redux-thunk-tester', () => {
   test('getActionHistory with await dispatch', async () => {
     const {store, reduxThunkTester: {getActionHistory}} = getNewStore();
     await store.dispatch(incrementActionAsyncWithDelay());
-    expect(getActionHistory()).toEqual([incrementAction()]);
+    expect(getActionHistory()[0]).toBeInstanceOf(Promise);
   });
 
   test('getActionHistory without await dispatch', () => {
     const {store, reduxThunkTester: {getActionHistory}} = getNewStore();
+    expect(store.dispatch(incrementAction())).toEqual(incrementAction());
     expect(store.dispatch(incrementActionAsync())).toBeInstanceOf(Promise);
     expect(store.dispatch(incrementActionAsyncWithDelay())).toBeInstanceOf(Promise);
-    expect(getActionHistory())
-      .toEqual([incrementAction()]); // because thunk with delay will be dispatched later
+    expect(getActionHistory().length).toEqual(3);
+    expect(getActionHistory()[0]).toEqual(incrementAction());
+    expect(getActionHistory()[1]).toBeInstanceOf(Promise);
+    expect(getActionHistory()[2]).toBeInstanceOf(Promise);
   });
 
   test('getActionHistory: call dispatch with function', () => {
     const {store, reduxThunkTester: {getActionHistory}} = getNewStore();
     store.dispatch(incrementAction);
-    expect(getActionHistory()).toEqual([]);
+    expect(getActionHistory()[0]).toBeInstanceOf(Promise);
+  });
+
+  test('getActionHistory: call dispatch with thunk with delay', () => {
+    const {store, reduxThunkTester: {getActionHistory}} = getNewStore();
+    store.dispatch(incrementActionAsyncWithDelay());
+    expect(getActionHistory()[0]).toBeInstanceOf(Promise);
   });
 
   test('getActionHistory: object action', () => {
     const {store, reduxThunkTester: {getActionHistory}} = getNewStore();
     store.dispatch(incrementAction());
     expect(getActionHistory()).toEqual([incrementAction()])
+  });
+
+  test('getActionHistoryAsync', async () => {
+    const {store, reduxThunkTester: {getActionHistoryAsync}} = getNewStore();
+    expect(store.dispatch(incrementAction())).toEqual(incrementAction());
+    expect(store.dispatch(incrementActionAsync())).toBeInstanceOf(Promise);
+    expect(store.dispatch(incrementActionAsyncWithDelay())).toBeInstanceOf(Promise);
+    const history = await getActionHistoryAsync();
+    expect(history.length).toEqual(3);
+    expect(history)
+      .toEqual([incrementAction(), incrementAction(), incrementAction()]);
   });
 
   test('getActionHistoryStringify', () => {
@@ -155,6 +177,17 @@ describe('redux-thunk-tester', () => {
     expect(getActionHistoryStringify({withColor: false})).toMatchSnapshot();
     expect(getActionHistoryStringify({inlineLimit: 4, withColor: false})).toMatchSnapshot();
     console.log(getActionHistoryStringify({withColor: true}));
+  });
+
+  test('getActionHistoryStringifyAsync', async () => {
+    const {store, reduxThunkTester: {getActionHistoryStringifyAsync}} = getNewStore();
+    expect(store.dispatch(incrementAction())).toEqual(incrementAction());
+    expect(store.dispatch(incrementActionAsync())).toBeInstanceOf(Promise);
+    expect(store.dispatch(incrementActionAsyncWithDelay())).toBeInstanceOf(Promise);
+    expect(await getActionHistoryStringifyAsync({withColor: false})).toMatchSnapshot();
+    expect(await getActionHistoryStringifyAsync({inlineLimit: 4, withColor: false})).toMatchSnapshot();
+    console.log(await getActionHistoryStringifyAsync({withColor: true}));
+
   });
 
   test('actionStringify', () => {

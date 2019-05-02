@@ -11,8 +11,7 @@ const renderComponent = () => {
 
   const store = createStore(
     combineReducers({example: reducer}),
-    undefined,
-    applyMiddleware(reduxThunkTester.reduxThunkHistory),
+    applyMiddleware(reduxThunkTester.createReduxThunkHistoryMiddleware()),
   );
 
   const component = mount(<Provider store={store}><ExampleConnectedComponent /></Provider>);
@@ -40,28 +39,53 @@ describe('Example.', () => {
     console.log(stringifyObject(store.getState().example));
   });
 
-  // test('Change input: actions.', () => {
-  //   clearActionHistory();
-  //   exampleConnectedComponent.find('input').simulate('change', {target: {value: 't'}});
-  //   exampleConnectedComponent.find('input').simulate('change', {target: {value: 'te'}});
-  //   exampleConnectedComponent.find('input').simulate('change', {target: {value: 'tes'}});
-  //   exampleConnectedComponent.find('input').simulate('change', {target: {value: 'test'}});
-  //   console.log(getActionHistoryStringify({withColor: true}));
-  //   expect(getActionHistoryStringify()).toMatchSnapshot();
-  // });
-  //
-  // test('Change input: store', () => {
-  //   expect(stringifyObject(store.getState().example)).toMatchSnapshot();
-  //   console.log(stringifyObject(store.getState().example));
-  // });
-  //
-  // test('Blur input: async action', async () => {
-  //   clearActionHistory();
-  //   exampleConnectedComponent.find('input').simulate('blur');
-  //   console.log(await getActionHistoryStringifyAsync({withColor: true}));
-  //   expect(await getActionHistoryStringifyAsync()).toMatchSnapshot();
-  // });
-  //
+  test('Change input: actions.', () => {
+    const {component, reduxThunkTester: {
+      clearActionHistory, getActionHistoryStringify
+    }} = renderComponent();
+
+    component.find('input').simulate('focus');
+    clearActionHistory();
+    component.find('input').simulate('change', {target: {value: 't'}});
+    component.find('input').simulate('change', {target: {value: 'te'}});
+    component.find('input').simulate('change', {target: {value: 'tes'}});
+    component.find('input').simulate('change', {target: {value: 'test'}});
+
+    console.log(getActionHistoryStringify({withColor: true}));
+    expect(getActionHistoryStringify()).toMatchSnapshot();
+  });
+
+  test('Change input: store', () => {
+    const {component, store, reduxThunkTester: {clearActionHistory}} = renderComponent();
+
+    component.find('input').simulate('focus');
+    clearActionHistory();
+    component.find('input').simulate('change', {target: {value: 't'}});
+    component.find('input').simulate('change', {target: {value: 'te'}});
+    component.find('input').simulate('change', {target: {value: 'tes'}});
+    component.find('input').simulate('change', {target: {value: 'test'}});
+
+    expect(stringifyObject(store.getState().example)).toMatchSnapshot();
+    console.log(stringifyObject(store.getState().example));
+  });
+
+  test('Blur input: async action', async () => {
+    const {component, reduxThunkTester: {
+      clearActionHistory, getActionHistoryStringify
+    }} = renderComponent();
+
+    component.find('input').simulate('focus');
+    component.find('input').simulate('change', {target: {value: 't'}});
+    component.find('input').simulate('change', {target: {value: 'te'}});
+    component.find('input').simulate('change', {target: {value: 'tes'}});
+    component.find('input').simulate('change', {target: {value: 'test'}});
+    // clearActionHistory();
+    component.find('input').simulate('blur');
+
+    console.log(getActionHistoryStringify({withColor: true}));
+    expect(await getActionHistoryStringify()).toMatchSnapshot();
+  });
+
   // test('Blur input: store', () => {
   //   expect(stringifyObject(store.getState().example)).toMatchSnapshot();
   //   console.log(stringifyObject(store.getState().example));

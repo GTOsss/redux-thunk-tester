@@ -26,6 +26,7 @@
     "@babel/plugin-proposal-class-properties": "^7.4.4",
     "@babel/preset-env": "^7.4.4",
     "@babel/preset-react": "^7.0.0",
+    "@types/jest": "^24.0.12",
     "cross-env": "^5.2.0",
     "enzyme": "^3.9.0",
     "enzyme-adapter-react-16": "^1.12.1",
@@ -37,7 +38,7 @@
     "eslint-plugin-react": "^7.12.4",
     "jest": "^24.7.1",
     "jsdom": "^15.0.0",
-    "redux-thunk-tester": "^3.0.4",
+    "redux-thunk-tester": "^3.0.5",
     "sass-loader": "^7.1.0",
     "stringify-object": "^3.3.0"
   }

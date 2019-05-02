@@ -1,5 +1,33 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
+exports[`Example. Blur input: async action 1`] = `"undefined"`;
+
+exports[`Example. Change input: actions. 1`] = `
+"CHANGE
+ payload: {value: 't'},
+CHANGE
+ payload: {value: 'te'},
+CHANGE
+ payload: {value: 'tes'},
+CHANGE
+ payload: {value: 'test'}"
+`;
+
+exports[`Example. Change input: store 1`] = `
+"{
+	active: true,
+	value: 'test'
+}"
+`;
+
+exports[`Example. Focus input: action 1`] = `"FOCUS"`;
+
+exports[`Example. Focus input: store 1`] = `
+"{
+	active: true
+}"
+`;
+
 exports[`Example. Render example. 1`] = `
 <Provider
   store={
