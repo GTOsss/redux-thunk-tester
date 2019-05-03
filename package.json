@@ -1,6 +1,6 @@
 {
   "name": "redux-thunk-tester",
-  "version": "3.0.5",
+  "version": "3.1.1",
   "description": "Useful for integration tests when using synchronous/asynchronous redux actions.",
   "main": "lib/index.js",
   "unpkg": "dist/redux-thunk-tester.js",

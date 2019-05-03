@@ -1,6 +1,6 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`Example. Blur input: async action 1`] = `"undefined"`;
+exports[`Example. Blur input: async action 1`] = `"BLUR"`;
 
 exports[`Example. Change input: actions. 1`] = `
 "CHANGE
@@ -13,13 +13,6 @@ CHANGE
  payload: {value: 'test'}"
 `;
 
-exports[`Example. Change input: store 1`] = `
-"{
-	active: true,
-	value: 'test'
-}"
-`;
-
 exports[`Example. Focus input: action 1`] = `"FOCUS"`;
 
 exports[`Example. Focus input: store 1`] = `
@@ -29,6 +22,35 @@ exports[`Example. Focus input: store 1`] = `
 `;
 
 exports[`Example. Render example. 1`] = `
+<Provider
+  store={
+    Object {
+      "dispatch": [Function],
+      "getState": [Function],
+      "replaceReducer": [Function],
+      "subscribe": [Function],
+      Symbol(observable): [Function],
+    }
+  }
+>
+  <ConnectFunction>
+    <Example
+      blurThunk={[Function]}
+      changeAction={[Function]}
+      focusAction={[Function]}
+    >
+      <input
+        onBlur={[Function]}
+        onChange={[Function]}
+        onFocus={[Function]}
+        type="text"
+      />
+    </Example>
+  </ConnectFunction>
+</Provider>
+`;
+
+exports[`Example. Render last state. 1`] = `
 <Provider
   store={
     Object {

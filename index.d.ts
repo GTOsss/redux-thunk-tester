@@ -14,9 +14,9 @@ declare class ReduxThunkTester {
 
 	static actionStringify(action: Action, options?: StringifyOptions): string;
 	getActionHistoryStringify(options?: StringifyOptions): string;
-	// getActionHistoryStringifyAsync(): Promise<string>;
+	getActionHistoryStringifyAsync(): Promise<string>;
 	getActionHistory(): Action[] | Promise<Action>[];
-	// getActionHistoryAsync(): Promise<Action>[];
+	getActionHistoryAsync(): Promise<Action>[];
 	clearActionHistory(): Action[] | Promise<Action>[];
 	createReduxThunkHistoryMiddleware() : any;
 }
