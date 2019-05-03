@@ -59,78 +59,114 @@ export default connect(null, mapDispatchToProps)(Example);
 ### example.test.js
 ```
 import React from 'react';
-import { mount } from 'enzyme';
-import { Provider } from 'react-redux';
-import { createStore, applyMiddleware, combineReducers } from 'redux';
-import ExampleConnectedComponent, { reducer } from './example';
+import {mount} from 'enzyme';
+import {Provider} from 'react-redux';
+import {createStore, applyMiddleware, combineReducers} from 'redux';
 import stringifyObject from 'stringify-object';
-import {
-  reduxThunkHistory, clearActionHistory,
-  getActionHistoryStringify, getActionHistoryStringifyAsync,
-} from 'redux-thunk-tester';
+import ReduxThunkTester from 'redux-thunk-tester';
+import thunk from 'redux-thunk';
+import ExampleConnectedComponent, {reducer} from './example';
 
-const store = createStore(
-  combineReducers({ example: reducer }),
-  undefined,
-  applyMiddleware(reduxThunkHistory),
-);
+const renderComponent = () => {
+  const reduxThunkTester = new ReduxThunkTester();
 
-const exampleConnectedComponent = mount(<Provider store={store}><ExampleConnectedComponent /></Provider>);
+  const store = createStore(
+    combineReducers({example: reducer}),
+    applyMiddleware(
+      reduxThunkTester.createReduxThunkHistoryMiddleware(),
+      thunk
+    ),
+  );
+
+  const component = mount(<Provider store={store}><ExampleConnectedComponent /></Provider>);
+
+  return {reduxThunkTester, component, store};
+};
 
 describe('Example.', () => {
   test('Render example.', () => {
-    expect(exampleConnectedComponent).toMatchSnapshot();
+    const {component} = renderComponent();
+    expect(component).toMatchSnapshot();
   });
 
   test('Focus input: action', () => {
-    exampleConnectedComponent.find('input').simulate('focus');
-    console.log(getActionHistoryStringify({ withColor: true }));
+    const {component, reduxThunkTester: {getActionHistoryStringify}} = renderComponent();
+    component.find('input').simulate('focus');
     expect(getActionHistoryStringify()).toMatchSnapshot();
+    console.log(getActionHistoryStringify({withColor: true}));
   });
 
   test('Focus input: store', () => {
-    clearActionHistory();
+    const {component, store} = renderComponent();
+    component.find('input').simulate('focus');
     expect(stringifyObject(store.getState().example)).toMatchSnapshot();
     console.log(stringifyObject(store.getState().example));
   });
 
   test('Change input: actions.', () => {
+    const {component, reduxThunkTester: {
+      clearActionHistory, getActionHistoryStringify
+    }} = renderComponent();
+
+    component.find('input').simulate('focus');
     clearActionHistory();
-    exampleConnectedComponent.find('input').simulate('change', { target: { value: 't' } });
-    exampleConnectedComponent.find('input').simulate('change', { target: { value: 'te' } });
-    exampleConnectedComponent.find('input').simulate('change', { target: { value: 'tes' } });
-    exampleConnectedComponent.find('input').simulate('change', { target: { value: 'test' } });
-    console.log(getActionHistoryStringify({ withColor: true }));
+    component.find('input').simulate('change', {target: {value: 't'}});
+    component.find('input').simulate('change', {target: {value: 'te'}});
+    component.find('input').simulate('change', {target: {value: 'tes'}});
+    component.find('input').simulate('change', {target: {value: 'test'}});
+
+    console.log(getActionHistoryStringify({withColor: true}));
     expect(getActionHistoryStringify()).toMatchSnapshot();
   });
 
   test('Change input: store', () => {
-    expect(stringifyObject(store.getState().example)).toMatchSnapshot();
+    const {component, store, reduxThunkTester: {clearActionHistory}} = renderComponent();
+
+    component.find('input').simulate('focus');
+    clearActionHistory();
+    component.find('input').simulate('change', {target: {value: 't'}});
+    component.find('input').simulate('change', {target: {value: 'te'}});
+    component.find('input').simulate('change', {target: {value: 'tes'}});
+    component.find('input').simulate('change', {target: {value: 'test'}});
+
+    expect(store.getState().example).toEqual({active: true, value: 'test'});
     console.log(stringifyObject(store.getState().example));
   });
 
   test('Blur input: async action', async () => {
+    const {component, reduxThunkTester: {
+      clearActionHistory, getActionHistoryStringifyAsync
+    }} = renderComponent();
+
+    component.find('input').simulate('focus');
+    component.find('input').simulate('change', {target: {value: 't'}});
+    component.find('input').simulate('change', {target: {value: 'te'}});
+    component.find('input').simulate('change', {target: {value: 'tes'}});
+    component.find('input').simulate('change', {target: {value: 'test'}});
     clearActionHistory();
-    exampleConnectedComponent.find('input').simulate('blur');
-    console.log(await getActionHistoryStringifyAsync({ withColor: true }));
+    component.find('input').simulate('blur');
+
+    console.log(await getActionHistoryStringifyAsync({withColor: true}));
     expect(await getActionHistoryStringifyAsync()).toMatchSnapshot();
   });
 
-  test('Blur input: store', () => {
-    expect(stringifyObject(store.getState().example)).toMatchSnapshot();
-    console.log(stringifyObject(store.getState().example));
-  });
+  test('Blur input: store', async () => {
+    const {component, store, reduxThunkTester: {getActionHistoryAsync}} = renderComponent();
 
-  test('input-store equal "test"', () => {
-    const expectInputValue = 'test';
-    const storeValue = store.getState().example.value;
-    expect(expectInputValue).toEqual(storeValue);
-  });
+    component.find('input').simulate('focus');
+    component.find('input').simulate('change', {target: {value: 't'}});
+    component.find('input').simulate('change', {target: {value: 'te'}});
+    component.find('input').simulate('change', {target: {value: 'tes'}});
+    component.find('input').simulate('change', {target: {value: 'test'}});
+    component.find('input').simulate('blur');
 
-  test('Render last state.', () => {
-    expect(exampleConnectedComponent).toMatchSnapshot();
+    await getActionHistoryAsync(); // need to wait all thunk.
+
+    expect(store.getState().example).toEqual({active: false, value: 'test'});
+    console.log(store.getState().example);
   });
 });
+
 
 ```
 
