@@ -57,6 +57,8 @@ const mapDispatchToProps = (dispatch) => ({
 export default connect(null, mapDispatchToProps)(Example);
 ```
 ### example.test.js
+Example: https://github.com/GTOsss/redux-thunk-tester/tree/master/example/src
+
 ```
 import React from 'react';
 import {mount} from 'enzyme';
