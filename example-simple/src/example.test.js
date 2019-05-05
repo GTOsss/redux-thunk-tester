@@ -37,7 +37,6 @@ describe('Simple example.', () => {
       result: 'success response'
     });
 
-    console.log(ReduxThunkTester.actionStringify(actionHistory[2]));
     console.log(await getActionHistoryStringifyAsync({withColor: true}));
   });
 });
