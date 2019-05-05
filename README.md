@@ -1,6 +1,92 @@
 # Redux thunk tester
 Useful for integration tests when using synchronous/asynchronous redux actions.
-## Example
+
+## Simple example
+Repository: https://github.com/GTOsss/redux-thunk-tester/tree/master/example-simple/src
+
+### example.js
+```
+const TOGGLE_LOADING = 'TOGGLE_LOADING';
+const SOME_BACKEND_REQUEST = 'SOME_BACKEND_REQUEST';
+
+const request = (ms) => new Promise((resolve) => {
+  setTimeout(() => resolve('success response'), ms);
+});
+
+const resultRequestAction = (value) => ({ type: SOME_BACKEND_REQUEST, payload: value });
+const toggleLoadingAction = (value) => ({ type: TOGGLE_LOADING, payload: value });
+
+
+export const reducer = (state = {}, { type, payload } = {}) => {
+  switch (type) {
+    case TOGGLE_LOADING: return { ...state, loading: payload };
+    case SOME_BACKEND_REQUEST: return { ...state, result: payload };
+    default: return state;
+  }
+};
+
+export const asyncThunkWithRequest = () => async (dispatch) => {
+  try {
+    dispatch(toggleLoadingAction(true));
+    const result = await request(200);
+    dispatch(resultRequestAction(result));
+  } finally {
+    dispatch(toggleLoadingAction(false));
+  }
+};
+```
+
+### example.test.js
+```
+import React from 'react';
+import {createStore, applyMiddleware, combineReducers} from 'redux';
+import {asyncThunkWithRequest, reducer} from './example';
+import ReduxThunkTester from 'redux-thunk-tester';
+import thunk from 'redux-thunk';
+
+const createMockStore = () => {
+  const reduxThunkTester = new ReduxThunkTester();
+
+  const store = createStore(
+    combineReducers({exampleSimple: reducer}),
+    applyMiddleware(
+      reduxThunkTester.createReduxThunkHistoryMiddleware(),
+      thunk
+    ),
+  );
+
+  return {reduxThunkTester, store};
+};
+
+describe('Simple example.', () => {
+  test('Success request.', async () => {
+    const {store, reduxThunkTester: {getActionHistoryAsync, getActionHistoryStringifyAsync}} = createMockStore();
+
+    store.dispatch(asyncThunkWithRequest());
+
+    const actionHistory = await getActionHistoryAsync(); // need to wait async thunk (all inner dispatch)
+
+    expect(actionHistory).toEqual([
+      {type: 'TOGGLE_LOADING', payload: true},
+      {type: 'SOME_BACKEND_REQUEST', payload: 'success response'},
+      {type: 'TOGGLE_LOADING', payload: false},
+    ]);
+
+    expect(store.getState().exampleSimple).toEqual({
+      loading: false,
+      result: 'success response'
+    });
+
+    console.log(ReduxThunkTester.actionStringify(actionHistory[2]));
+    console.log(await getActionHistoryStringifyAsync({withColor: true}));
+  });
+});
+
+```
+
+## Example for react
+Repository: https://github.com/GTOsss/redux-thunk-tester/tree/master/example/src
+
 ### example.js:
 ```
 const FOCUS = 'FOCUS';
@@ -57,7 +143,6 @@ const mapDispatchToProps = (dispatch) => ({
 export default connect(null, mapDispatchToProps)(Example);
 ```
 ### example.test.js
-Example: https://github.com/GTOsss/redux-thunk-tester/tree/master/example/src
 
 ```
 import React from 'react';
