@@ -1,5 +1,154 @@
 # Redux thunk tester
-Useful for integration tests when using synchronous/asynchronous redux actions.
+Useful for tests when using synchronous/asynchronous redux actions.
+```
+npm i --save-dev redux-thunk-tester
+```
+
+# Methods
+### createReduxThunkHistoryMiddleware
+First need to create a store with reduxThunkTester middleware and create an instance of ReduxThunkTester.
+
+```
+import ReduxThunkTester from 'redux-thunk-tester'.
+
+const createMockStore = () => {
+  const reduxThunkTester = new ReduxThunkTester();
+
+  const store = createStore(
+    combineReducers({exampleSimple: reducer}),
+    applyMiddleware(
+      reduxThunkTester.createReduxThunkHistoryMiddleware(),
+      thunk
+    ),
+  );
+
+  return {reduxThunkTester, store};
+};
+
+```
+Now reduxThunkTester have next methods:
+
+```
+type StringifyOptions = {
+  inlineLimit?: number,
+  withColor?: boolean,
+}
+
+getActionHistory(): Action[] | Promise<Action>[];
+getActionHistoryAsync(): Promise<Action>[];
+clearActionHistory(): Action[] | Promise<Action>[];
+getActionHistoryStringify(options?: StringifyOptions): string;
+getActionHistoryStringifyAsync(options?: StringifyOptions): Promise<string>;
+```
+	
+### getActionHistory(): Array of actions
+Return array of actions. Use when not using thunk (async actions), for async actions use getActionHistoryAsync.
+	
+Example:
+```
+test('Test action history', () => {
+  const {reduxThunkTester: {getActionHistory}, store} = createMockStore();
+  
+  store.dispatch({type: 'TEST_ACTION_1'});	
+  store.dispatch({type: 'TEST_ACTION_2'});	
+ 
+  expect(getActionHistory).toEqual([
+   {type: 'TEST_ACTION_1'},
+   {type: 'TEST_ACTION_2'},
+  ])
+}) 
+```
+
+### getActionHistoryAsync(): Array of promise
+Return array of promise. Use when using thunk (async actions).
+Example: 
+```
+test('Test action history', async () => {
+  const {reduxThunkTester: {getActionHistoryAsync}, store} = createMockStore();
+  
+  const someAsyncAction = () => async (dispatch) => {
+    // here may be await for some async request
+    store.dispatch({type: 'TEST_ACTION', payload: 1});	
+    store.dispatch({type: 'TEST_ACTION', payload: 2});	
+    store.dispatch({type: 'TEST_ACTION', payload: 3});	
+  }
+
+  store.dispatch(someAsyncAction());
+  
+  expect(await getActionHistoryAsync).toEqual([
+    {type: 'TEST_ACTION', payload: 1},
+    {type: 'TEST_ACTION', payload: 2},
+    {type: 'TEST_ACTION', payload: 3},
+  ])
+}) 
+```
+
+### clearActionHistory()
+Call this method when you want clear action history.
+Example: 
+```
+test('Test action history', () => {
+  const {reduxThunkTester: {getActionHistory, clearActionHistory}, store} = createMockStore();
+  
+  store.dispatch({type: 'TEST_ACTION_1'});	
+  clearActionHistory();
+  store.dispatch({type: 'TEST_ACTION_2'});	
+ 
+  expect(getActionHistory).toEqual([
+   {type: 'TEST_ACTION_2'},
+  ])
+}) 
+```
+
+### getActionHistoryStringify([, params]): string
+Return string with action history. Useful for debugging. Use when not using thunk (async actions), for async actions use getActionHistoryStringifyAsync.
+example:
+
+```
+test('Change input actions', () => {
+  const {reduxThunkTester: {getActionHistoryStringify}, store} = createMockStore();
+  
+  store.dispatch({type: 'TEST_ACTION', payload: 1});	
+  store.dispatch({type: 'TEST_ACTION', payload: 2});	
+  store.dispatch({type: 'TEST_ACTION', payload: 3});	
+ 
+  console.log(getActionHistoryStringify({withColor: true}));
+}) 
+```
+Result: 
+![Screenshot result getActionHistoryStringify](https://raw.githubusercontent.com/GTOsss/redux-thunk-tester/master/readme-source/get-action-history.png)
+
+
+### getActionHistoryStringifyAsync([, params]): Promise
+Return string with action history. Useful for debugging. Use when use thunk (async actions).
+example:
+
+```
+test('Change input actions', async () => {
+  const {reduxThunkTester: {getActionHistoryStringifyAsync}, store} = createMockStore();
+  
+  store.dispatch({type: 'TEST_ACTION', payload: 1});	
+  store.dispatch({type: 'TEST_ACTION', payload: 2});	
+  store.dispatch({type: 'TEST_ACTION', payload: 3});	
+ 
+  console.log(await getActionHistoryStringify({withColor: true}));
+}) 
+```
+Result: 
+![Screenshot result getActionHistoryStringify](https://raw.githubusercontent.com/GTOsss/redux-thunk-tester/master/readme-source/get-action-history.png)
+
+### static actionStringify(action[, stringifyOptions])
+Use when need output action in console. For example:
+```
+import ReduxThunkTester = 'redux-thunk-tester';
+
+...
+
+console.log(ReduxThunkTester.actionStringify({
+  type: 'SOME_ACTION',
+  payload: {message: 'some payload'},
+}))
+```
 
 ## Simple example
 Repository: https://github.com/GTOsss/redux-thunk-tester/tree/master/example-simple/src
