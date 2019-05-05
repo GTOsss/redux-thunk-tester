@@ -39,14 +39,4 @@ describe('Simple example.', () => {
 
     console.log(await getActionHistoryStringifyAsync({withColor: true}));
   });
-
-  test('Change input actions', () => {
-    const {reduxThunkTester: {getActionHistoryStringify}, store} = createMockStore();
-
-    store.dispatch({type: 'TEST_ACTION', payload: 1});
-    store.dispatch({type: 'TEST_ACTION', payload: 2});
-    store.dispatch({type: 'TEST_ACTION', payload: 3});
-
-    console.log(getActionHistoryStringify({withColor: true}));
-  })
 });
