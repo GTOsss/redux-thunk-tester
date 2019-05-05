@@ -42,6 +42,12 @@ const incrementActionAsyncWithDelay = () => async (dispatch) => {
   dispatch(incrementAction());
 };
 
+const incrementActionAsyncWithDelayAndSeveralDispatch = () => async (dispatch) => {
+  dispatch(incrementAction());
+  await sleep(200);
+  dispatch(incrementAction());
+};
+
 const incrementActionAsyncWillReturnState = () => async (dispatch, getState) => {
   dispatch(incrementAction());
   return getState();
@@ -82,6 +88,7 @@ describe('redux after connect store-history middleware.', () => {
 describe('redux-middleware', () => {
   test('createReduxThunkHistoryMiddleware', async() => {
     const history = [];
+    const promises = [];
     const getState = jest.fn();
     const dispatch = jest.fn();
     const next = jest.fn();
@@ -96,59 +103,42 @@ describe('redux-middleware', () => {
       dispatch(actionThunk);
     };
 
-    const middleware = reduxMiddleware(history);
+    const middleware = reduxMiddleware(history, promises);
     const middlewareInner = middleware({dispatch, getState});
     const middlewareNext = middlewareInner(next);
 
-    expect(typeof middleware).toEqual('function');
-    expect(typeof middlewareInner).toEqual('function');
     expect(typeof middlewareNext).toEqual('function');
 
     expect(middlewareNext(action)).toEqual(undefined);
+    expect(history).toEqual([action]);
     expect(next.mock.calls).toEqual([[action]]);
 
     next.mockClear();
 
     middlewareNext(actionThunk());
-    expect(next.mock.calls).toEqual([[action]]);
+    expect(next.mock.calls).toEqual([]);
     expect(getState.mock.calls.length).toEqual(1);
-    expect(await Promise.all(history)).toEqual([action, action]);
+    expect(promises.length).toEqual(1);
+    expect(promises[0]).toBeInstanceOf(Promise);
+    expect(promises[1]).toBeUndefined();
+    await Promise.all(promises);
+    console.log(history);
     expect(middlewareNext(actionThunk())).toBeInstanceOf(Promise);
 
     history.splice(0, history.length);
+    promises.splice(0, history.length);
     middlewareNext(incrementActionAsyncWithDelay());
-    expect(history[0]).toBeInstanceOf(Promise);
+    expect(promises[0]).toBeInstanceOf(Promise);
   });
 });
 
 describe('redux-thunk-tester', () => {
-  test('getActionHistory with await dispatch', async () => {
-    const {store, reduxThunkTester: {getActionHistory}} = getNewStore();
-    await store.dispatch(incrementActionAsyncWithDelay());
-    expect(getActionHistory()[0]).toBeInstanceOf(Promise);
-  });
-
   test('getActionHistory without await dispatch', () => {
     const {store, reduxThunkTester: {getActionHistory}} = getNewStore();
     expect(store.dispatch(incrementAction())).toEqual(incrementAction());
     expect(store.dispatch(incrementActionAsync())).toBeInstanceOf(Promise);
     expect(store.dispatch(incrementActionAsyncWithDelay())).toBeInstanceOf(Promise);
-    expect(getActionHistory().length).toEqual(3);
-    expect(getActionHistory()[0]).toEqual(incrementAction());
-    expect(getActionHistory()[1]).toBeInstanceOf(Promise);
-    expect(getActionHistory()[2]).toBeInstanceOf(Promise);
-  });
-
-  test('getActionHistory: call dispatch with function', () => {
-    const {store, reduxThunkTester: {getActionHistory}} = getNewStore();
-    store.dispatch(incrementAction);
-    expect(getActionHistory()[0]).toBeInstanceOf(Promise);
-  });
-
-  test('getActionHistory: call dispatch with thunk with delay', () => {
-    const {store, reduxThunkTester: {getActionHistory}} = getNewStore();
-    store.dispatch(incrementActionAsyncWithDelay());
-    expect(getActionHistory()[0]).toBeInstanceOf(Promise);
+    expect(getActionHistory().length).toEqual(2);
   });
 
   test('getActionHistory: object action', () => {
@@ -187,7 +177,13 @@ describe('redux-thunk-tester', () => {
     expect(await getActionHistoryStringifyAsync({withColor: false})).toMatchSnapshot();
     expect(await getActionHistoryStringifyAsync({inlineLimit: 4, withColor: false})).toMatchSnapshot();
     console.log(await getActionHistoryStringifyAsync({withColor: true}));
-
+  });
+  
+  test('several dispatch and delay between them', async () => {
+    const {store, reduxThunkTester: {getActionHistory, getActionHistoryAsync}} = getNewStore();
+    store.dispatch(incrementActionAsyncWithDelayAndSeveralDispatch());
+    expect(getActionHistory()).toEqual([incrementAction()])
+    expect(await getActionHistoryAsync()).toEqual([incrementAction(), incrementAction()])
   });
 
   test('actionStringify', () => {

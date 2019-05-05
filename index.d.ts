@@ -11,10 +11,11 @@ type StringifyOptions = {
 
 declare class ReduxThunkTester {
 	readonly actions: Array<object>;
+	readonly promises: Array<Promise<any>>;
 
 	static actionStringify(action: Action, options?: StringifyOptions): string;
 	getActionHistoryStringify(options?: StringifyOptions): string;
-	getActionHistoryStringifyAsync(): Promise<string>;
+	getActionHistoryStringifyAsync(options?: StringifyOptions): Promise<string>;
 	getActionHistory(): Action[] | Promise<Action>[];
 	getActionHistoryAsync(): Promise<Action>[];
 	clearActionHistory(): Action[] | Promise<Action>[];

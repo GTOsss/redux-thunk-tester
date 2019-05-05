@@ -5,6 +5,7 @@ import creatHistoryMiddleware from './redux-middleware';
 class ReduxThunkTester {
   constructor() {
     this.actions = [];
+    this.promises = [];
   }
 
   /**
@@ -21,7 +22,7 @@ class ReduxThunkTester {
     const stringifyConfig = { inlineCharacterLimit: inlineLimit };
     const type = withColor ? Colors.green(typeArg) : typeArg;
     const meta = metaArg ? `\n meta: ${stringifyObject(metaArg, stringifyConfig)}` : '';
-    const payload = payloadArg ? `\n payload: ${stringifyObject(payloadArg, stringifyConfig)}` : '';
+    const payload = payloadArg !== undefined ? `\n payload: ${stringifyObject(payloadArg, stringifyConfig)}` : '';
     return `${type}${meta}${payload}`;
   };
 
@@ -43,9 +44,12 @@ class ReduxThunkTester {
    */
   getActionHistoryStringifyAsync = async (
     { inlineLimit = 50, withColor = false } = {}
-  ) => (await Promise.all(this.actions))
-    .map((action) => ReduxThunkTester.actionStringify(action, { inlineLimit, withColor }))
-    .join(',\n');
+  ) => {
+    await Promise.all(this.promises);
+    return this.actions
+      .map((action) => ReduxThunkTester.actionStringify(action, { inlineLimit, withColor }))
+      .join(',\n')
+  };
 
   /**
    * Get actions
@@ -57,18 +61,24 @@ class ReduxThunkTester {
    * Get actions
    * @returns {Array} Array of actions
    */
-  getActionHistoryAsync = async () => (await Promise.all(this.actions));
+  getActionHistoryAsync = async () => {
+    await Promise.all(this.promises);
+    return this.actions;
+  };
 
   /**
    * Clear actions history.
    * @returns {Array} Cleared actions.
    */
-  clearActionHistory = () => this.actions.splice(0, this.actions.length);
+  clearActionHistory = () => {
+    this.actions.splice(0, this.actions.length);
+    this.promises.splice(0, this.promises.length);
+  };
 
   /**
    * Function for "applyMiddleware" of redux.
    */
-  createReduxThunkHistoryMiddleware = () => creatHistoryMiddleware(this.actions) ;
+  createReduxThunkHistoryMiddleware = () => creatHistoryMiddleware(this.actions, this.promises) ;
 }
 
 export default ReduxThunkTester;
